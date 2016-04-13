@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[181]:
+# In[26]:
 
 import urllib2, zipfile, os
 from datetime import datetime
@@ -32,7 +32,7 @@ auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
 
-# In[182]:
+# In[27]:
 
 def getDateTime():
     date = str(datetime.utcnow())
@@ -43,7 +43,7 @@ def getDateTime():
     return date, year, month, day, hour
 
 
-# In[183]:
+# In[28]:
 
 def getSPCfiles():
     date, year, month, day, hour = getDateTime()
@@ -74,7 +74,7 @@ def getSPCfiles():
     #print urlList
 
 
-# In[184]:
+# In[29]:
 
 def catfiles(): #gets categorical outlooks
     cat = []
@@ -91,7 +91,7 @@ def catfiles(): #gets categorical outlooks
     return cat
 
 
-# In[185]:
+# In[30]:
 
 def windfiles(): #gets day 1 wind prob files
     wind = []
@@ -104,7 +104,7 @@ def windfiles(): #gets day 1 wind prob files
     return sorted(wind, reverse = True)
 
 
-# In[186]:
+# In[31]:
 
 def hailfiles(): #gets day 1 hail prob files
     hail = []
@@ -117,7 +117,7 @@ def hailfiles(): #gets day 1 hail prob files
     return sorted(hail)
 
 
-# In[187]:
+# In[32]:
 
 def tornfiles(): #gets day 1 torn prob files
     torn = []
@@ -131,7 +131,7 @@ def tornfiles(): #gets day 1 torn prob files
     return sorted(torn, reverse = True)
 
 
-# In[188]:
+# In[33]:
 
 def day4_8files(): #gets day 4-8 prob files
     day4_8 = []
@@ -151,7 +151,7 @@ def day4_8files(): #gets day 4-8 prob files
     return day4_8
 
 
-# In[189]:
+# In[34]:
 
 def makeCatPlots(): #makes day 1-3 convective outlooks
     cat = catfiles() #list of files
@@ -228,7 +228,7 @@ def makeCatPlots(): #makes day 1-3 convective outlooks
     print SPCimagefiles
 
 
-# In[190]:
+# In[35]:
 
 def day4_8Plots(): #plots day 4-8 severe weather risk
     day4_8 = day4_8files() #list of files
@@ -282,6 +282,8 @@ def day4_8Plots(): #plots day 4-8 severe weather risk
         plt.close()
         SPCimagefiles.append(filename)    
     else: #if there is any risk on any of days 4-8
+        valid = [] #outlook valid time
+        expire = [] #outlook expire time
         for i in range(len(day4_8)):
             plt.figure()
             xmin = -120
@@ -296,8 +298,7 @@ def day4_8Plots(): #plots day 4-8 severe weather risk
 
             shpfile = day4_8[i]
             dn = Reader(shpfile).records()
-            valid = [] #outlook valid time
-            expire = [] #outlook expire time
+
             for j in dn:
                 if j.attributes['VALID'] not in valid:
                     valid.append(j.attributes['VALID'])
@@ -310,7 +311,7 @@ def day4_8Plots(): #plots day 4-8 severe weather risk
             plt.title('SPC Convective Outlook: Day ' + str(i+4))
             filename = 'SPCDay' + str(i+4) + '.png'
             #for blurb at bottom, with valid/expiration times
-            
+
             start = valid[i]
             validyear = start[0:4]
             validmonth = start[4:6]
@@ -340,7 +341,7 @@ def day4_8Plots(): #plots day 4-8 severe weather risk
     
 
 
-# In[191]:
+# In[36]:
 
 def tornadoPlot(): #plots tornado outlook
     torn = tornfiles()
@@ -427,7 +428,7 @@ def tornadoPlot(): #plots tornado outlook
     plt.close()
 
 
-# In[192]:
+# In[37]:
 
 def windhailPlot(files, name): #plots day 1 wind & hail probability
     SPCimagefiles = []
@@ -503,7 +504,7 @@ def windhailPlot(files, name): #plots day 1 wind & hail probability
     plt.close()
 
 
-# In[193]:
+# In[38]:
 
 def deleteFiles():
     fnames = listdir('.') #lists everything in the current directory
@@ -521,7 +522,7 @@ def deleteFiles():
     print "Successfully deleted " + str(count) + " files."
 
 
-# In[194]:
+# In[39]:
 
 def animate(): #makes a gif
     fnames = listdir('.')
@@ -549,7 +550,7 @@ def animate(): #makes a gif
     plt.close()
 
 
-# In[195]:
+# In[40]:
 
 def SPCtweet(api):
     getSPCfiles()
