@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[7]:
+# In[187]:
 
 import numpy as np
 import urllib2, tweepy
@@ -11,7 +11,7 @@ import datetime as dat
 plt.rc('font',family='Century Gothic')
 
 
-# In[8]:
+# In[188]:
 
 # Authenticate Twitter Session
 f = open('MSNWeatherBot_authentication.txt','r')
@@ -27,7 +27,7 @@ auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
 
-# In[9]:
+# In[189]:
 
 def getModelData(link): #gets lists of all of the important MOS variables (temps, winds, etc.) for the next 3 days
     modelOutput = urllib2.urlopen(link)
@@ -107,7 +107,7 @@ def getModelData(link): #gets lists of all of the important MOS variables (temps
     return hours, temps, wind, xWind, yWind, dewpoints, pop, date
 
 
-# In[10]:
+# In[190]:
 
 def daydata(link, day): #takes all of the data, and splits it up into forecasts for day 1, 2, and 3
     hours, temps, wind, xwind, ywind, dewpoint, pops6, date = getModelData(link)
@@ -162,7 +162,7 @@ def daydata(link, day): #takes all of the data, and splits it up into forecasts 
     return dayhours, daytemp, daywind, dayxwind, dayywind, daydewpoint, date, RH, daypops6
 
 
-# In[11]:
+# In[191]:
 
 def plotModelOutput(api): #Plots the data
     
@@ -194,7 +194,7 @@ def plotModelOutput(api): #Plots the data
     
     hours, xlabel = xlabels(0,1)
     
-    fig = plt.figure(figsize=(20,10))
+    fig = plt.figure(figsize=(10,8))
     plt.rcParams['xtick.labelsize'] = 17
     plt.rcParams['ytick.labelsize'] = 17
     plt.rcParams['lines.linewidth'] = 3
@@ -203,59 +203,30 @@ def plotModelOutput(api): #Plots the data
     
     
     ax = fig.add_subplot(111)
-    plt.subplots_adjust(hspace=.7, left = 0.2, right = 0.99, bottom = 0.0, wspace = 0.10)
+    plt.subplots_adjust(hspace=0.7, left = 0.0, right = 0.99, bottom = 0.0, wspace = 0.15)
     plt.style.use('fivethirtyeight')
-    plt.title('Model Output Statistics (MOS): Madison, WI\n\n', fontsize = 25, color = 'w')
-    text = """\n\n\nThis data is generated from the 
-two major weather models run 
-in the US: the North American 
-model (NAM) and the Global 
-Forecast System (GFS). While 
-this data can be beneficial in 
-seeing what the weather will
-be like in certain places 
-around the US, it can sometimes
-lead to large forecasting 
-errors, which is why this is
-meant to serve as a GUIDE 
-rather than an absolute forecast.
-Check with your local forecasting
-office for the most accurate
-weather predictions.
-
-To learn more information
-about MOS products, check 
-out the following links:
-http://www.nws.noaa.gov/mdl/
-    synop/products.php
-    
-To learn how to interpret raw
-MOS forecasts, check out 
-the following links:
-http://aos.wisc.edu/~hopkins/
-    aos100/mos-doc.htm
-http://www.nws.noaa.gov/mdl/
-    synop/mavcard.php
-
-To learn how to interpret wind 
-barbs, check out the following 
-link: 
-http://weather.rap.ucar.edu/
-    info/about_windbarb.html
-"""
-    ax.text(-0.26, 1.1, text,
+    plt.title('Model Output Statistics (MOS): Madison, WI\n\n', fontsize = 25, color = 'k', )
+    text = """This data is generated from the two major weather models run in the US: the North American 
+model (NAM) and the Global Forecast System (GFS). While this data can be beneficial in seeing
+what the weather will be like in certain places around the US, it can sometimes lead to
+large forecasting errors, which is why this is meant to serve as a GUIDE rather than an
+absolute forecast. Check with your local forecasting office for the most accurate weather predictions.
+To learn more information about MOS products, check out the following links:
+http://www.nws.noaa.gov/mdl/synop/products.php, http://www.nws.noaa.gov/mdl/synop/mavcard.php
+To learn how to interpret wind barbs, check out the following link: 
+http://weather.rap.ucar.edu/info/about_windbarb.html"""
+    ax.text(-0.05, -0.08, text,
         verticalalignment='top', horizontalalignment='left',
         transform=ax.transAxes,
-        color='white', fontsize=17, fontweight = 'bold')
-    
+        color='k', fontsize=15)
     plt.axis('off')
     
     #DAY 1 Temperature/Dew Point
-    ax1 = fig.add_subplot(3,3,1)
-    plt.title('Day 1: Temperature and Dew Point\nValid ' + str(day1) + ' '
-              + str(min(gfsHours1[0], namHours1[0])) + ':00 - 11:59 PM', fontsize = 18)
-    ax1.plot(gfsHours1, gfsTemps1, 'r', label = 'GFS')
-    ax1.plot(gfsHours1, gfsDewpoints1, 'r--')  
+    ax1 = fig.add_subplot(2,3,1)
+    plt.title('Day 1: ' + str(day1) + '\n'
+              + str(min(gfsHours1[0], namHours1[0])) + ':00 - 11:59 PM', fontsize = 17)
+    ax1.plot(gfsHours1, gfsTemps1, 'firebrick', label = 'GFS')
+    ax1.plot(gfsHours1, gfsDewpoints1, color = 'firebrick', linestyle = '--')  
     plt.axis([min(min(gfsHours1), min(namHours1)), 24, minDewpoint - 5, maxT + 5], fontsize = 15)
     plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
     plt.xticks(hours, xlabel, fontsize = 15, fontweight = 'bold', color = 'k')
@@ -263,56 +234,59 @@ http://weather.rap.ucar.edu/
     plt.ylabel("Temperature (F)", fontsize = 15, fontweight = 'bold', color = 'k')
     
     ax2 = ax1.twiny()
-    ax2.plot(namHours1, namTemps1, 'b', label = 'NAM')
-    ax2.plot(namHours1, namDewpoints1, 'b--')
+    ax2.plot(namHours1, namTemps1, 'slateblue', label = 'NAM')
+    ax2.plot(namHours1, namDewpoints1, color = 'slateblue', linestyle = '--')
     plt.axis([min(min(gfsHours1), min(namHours1)), 24, minDewpoint - 5, maxT + 5])
     plt.axis('off')
     plt.legend(bbox_to_anchor=(0.0, 1.0), loc=2, borderaxespad=0, fontsize = 12)
     plt.xticks(hours, xlabel, fontsize = 15, fontweight = 'bold', color = 'k')
     
-    #DAY 1 Winds
-    ax1 = fig.add_subplot(3,3,4)
-    plt.title('Day 1: Wind Speed and Direction.\nValid ' + str(day1) + ' '
-              + str(min(gfsHours1[0], namHours1[0])) + ':00 - 11:59 PM', fontsize = 18)
-    ax1.bar(gfsHours1, gfsWind1, width = 0.70, color = 'red', label = 'GFS')
-    ax1.bar(np.array(namHours1)-0.70, namWind1, width = 0.70, color = 'b', label = 'NAM')
-    plt.barbs(gfsHours1, -10, gfsXWind1, gfsYWind1, linewidth = 1.25, color = 'red')
-    plt.barbs(namHours1, -10, namXWind1, namYWind1, linewidth = 1.25, color = 'b')
-    plt.hlines(0, 0, max(gfsHours1), color = 'k')
-    plt.axis([min(min(gfsHours1), min(namHours1))-4, 24, 
-              -20, maxWind + 15])
-    plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
-    plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
-    plt.yticks(np.arange(0,max(max(gfsWind1), max(namWind1)), 5), fontweight = 'bold', color = 'k')
-    plt.ylabel("Wind Speed (knots)", fontsize = 15, labelpad = -3, fontweight = 'bold', color = 'k')
+    #DAY 1 Winds (unwanted, too many graphs)
+    #ax1 = fig.add_subplot(3,3,4)
+    #plt.title('Day 1: Wind Speed and Direction.\nValid ' + str(day1) + ' '
+    #          + str(min(gfsHours1[0], namHours1[0])) + ':00 - 11:59 PM', fontsize = 18)
+    #ax1.bar(gfsHours1, gfsWind1, width = 0.70, color = 'red', label = 'GFS')
+    #ax1.bar(np.array(namHours1)-0.70, namWind1, width = 0.70, color = 'b', label = 'NAM')
+    #plt.barbs(gfsHours1, 0, gfsXWind1, gfsYWind1, linewidth = 1.25, color = 'red')
+    #plt.barbs(namHours1, 0, namXWind1, namYWind1, linewidth = 1.25, color = 'b')
+    #plt.hlines(0, 0, max(gfsHours1), color = 'k')
+    #plt.axis([min(min(gfsHours1), min(namHours1))-4, 24, 
+    #          -10, 10])
+    #plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
+    #plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
+    #plt.yticks(np.arange(0,max(max(gfsWind1), max(namWind1)), 5), fontweight = 'bold', color = 'k')
+    #plt.ylabel("Wind Speed (knots)", fontsize = 15, labelpad = -3, fontweight = 'bold', color = 'k')
 
      
     #DAY 1 Relative Humidity, precip potential
-    ax1 = fig.add_subplot(3,3,7)
-    plt.title('Day 1: Relative Humidity (line) and Chance of\nPrecipitation in the previous 6 hour period (bar).\nValid '
-              + str(day1) + ' ' + str(min(gfsHours1[0], namHours1[0])) + ':00 - 11:59 PM', fontsize = 16)
-    ax1.plot(gfsHours1, gfsRH1, 'r')
+    ax1 = fig.add_subplot(2,3,4)
+    plt.title('Day 1: '
+              + str(day1) + '\n' + str(min(gfsHours1[0], namHours1[0])) + ':00 - 11:59 PM', fontsize = 17)
+    ax1.plot(gfsHours1, gfsRH1, 'firebrick')
     plt.axis([min(min(gfsHours1), min(namHours1)), 24, 0, 100])
-    ax1.bar(gfsHours1, gfsPoP1, width = 0.70, color = 'r', label = 'GFS')
+    ax1.bar(gfsHours1, gfsPoP1, width = 0.70, color = 'firebrick', label = 'GFS')
     plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
     plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
     plt.ylabel("(%)", fontsize = 15, labelpad = -4, fontweight = 'bold', color = 'k')
-    plt.yticks(fontweight = 'bold', color = 'k')
+    plt.yticks(np.arange(0,101,20), fontweight = 'bold', color = 'k')
     
     ax2 = ax1.twiny()
-    ax2.plot(namHours1, namRH1, 'b')
-    ax2.bar(np.array(namHours1)-0.70, namPoP1, width = 0.70, color = 'b', label = 'NAM')
-    plt.axis([min(min(gfsHours1), min(namHours1)), 24, 0, 100])
+    ax2.plot(namHours1, namRH1, 'slateblue')
+    ax2.bar(np.array(namHours1)-0.70, namPoP1, width = 0.70, color = 'slateblue', label = 'NAM')
+    plt.barbs(gfsHours1, -20, gfsXWind1, gfsYWind1, linewidth = 3, color = 'firebrick')
+    plt.barbs(namHours1, -20, namXWind1, namYWind1, linewidth = 3, color = 'slateblue')
+    plt.hlines(0, min(min(gfsHours1), 0), max(gfsHours1), color = 'k')
+    plt.axis([min(min(gfsHours1), min(namHours1)), 24, -50, 100])
     plt.axis('off')
     plt.legend(bbox_to_anchor=(0.0, 1.0), loc=2, borderaxespad=0, fontsize = 12)
     plt.xticks(hours, xlabel, color = 'k')
     
     #DAY 2 Temperature/Dew Point
-    ax1 = fig.add_subplot(3,3,2)
-    plt.title('Day 2: Temperature and Dew Point\nValid ' + str(day1 + dat.timedelta(days=1))
-              + ' 12:00 AM - 11:59 PM', fontsize = 18)
-    ax1.plot(gfsHours2, gfsTemps2, 'r', label = 'GFS')
-    ax1.plot(gfsHours2, gfsDewpoints2, 'r--')
+    ax1 = fig.add_subplot(2,3,2)
+    plt.title('Temperature & Dew Point\nDay 2: ' + str(day1 + dat.timedelta(days=1))
+              + '\n12:00 AM - 11:59 PM', fontsize = 17)
+    ax1.plot(gfsHours2, gfsTemps2, 'firebrick', label = 'GFS')
+    ax1.plot(gfsHours2, gfsDewpoints2, color = 'firebrick', linestyle = '--')
     plt.axis([24, 48, minDewpoint - 5, maxT + 5])
     plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
     hours, xlabel = xlabels(1,2) 
@@ -321,105 +295,111 @@ http://weather.rap.ucar.edu/
     plt.xlabel("Time (CST)", fontsize = 15, labelpad = 5, fontweight = 'bold', color = 'k')
 
     ax2 = ax1.twiny()
-    ax2.plot(namHours2, namTemps2, 'b', label = 'NAM')
-    ax2.plot(namHours2, namDewpoints2, 'b--')    
+    ax2.plot(namHours2, namTemps2, 'slateblue', label = 'NAM')
+    ax2.plot(namHours2, namDewpoints2, color = 'slateblue', linestyle = '--')
     plt.axis([24, 48, minDewpoint - 5, maxT + 5])
     plt.axis('off')
     plt.legend(bbox_to_anchor=(0.0, 1.0), loc=2, borderaxespad=0, fontsize = 12)
     
     #DAY 2 winds
-    ax1 = fig.add_subplot(3,3,5)
-    plt.title('Day 2: Wind Speed and Direction.\nValid ' + str(day1 + dat.timedelta(days=1))
-              + ' 12:00 AM - 11:59 PM', fontsize = 18)
-    ax1.bar(gfsHours2, gfsWind2, width = 0.70, color = 'red', label = 'GFS')
-    ax1.bar(np.array(namHours2)-0.70, namWind2, width = 0.70, color = 'b', label = 'NAM')
-    plt.barbs(gfsHours2, -10, gfsXWind2, gfsYWind2, linewidth = 1.25, color = 'red')
-    plt.barbs(namHours2, -10, namXWind2, namYWind2, linewidth = 1.25, color = 'b')
-    plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
-    plt.axis([22.25, 48, -20, maxWind + 15])
-    plt.hlines(0, 0, 48, color = 'k')
-    plt.yticks(np.arange(0,max(max(gfsWind1), max(namWind1)), 5), fontweight = 'bold', color = 'k')
-    plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
-    plt.xlabel("Time (CST)", fontsize = 15, labelpad = 5, fontweight = 'bold', color = 'k')
+    #ax1 = fig.add_subplot(3,3,5)
+    #plt.title('Day 2: Wind Speed and Direction.\nValid ' + str(day1 + dat.timedelta(days=1))
+    #          + ' 12:00 AM - 11:59 PM', fontsize = 18)
+    #ax1.bar(gfsHours2, gfsWind2, width = 0.70, color = 'red', label = 'GFS')
+    #ax1.bar(np.array(namHours2)-0.70, namWind2, width = 0.70, color = 'b', label = 'NAM')
+    #plt.barbs(gfsHours2, 0, gfsXWind2, gfsYWind2, linewidth = 1.25, color = 'red')
+    #plt.barbs(namHours2, 0, namXWind2, namYWind2, linewidth = 1.25, color = 'b')
+    #plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
+    #plt.axis([22.25, 48, -10, 10])
+    #plt.hlines(0, 0, 48, color = 'k')
+    #plt.yticks(np.arange(0,max(max(gfsWind1), max(namWind1)), 5), fontweight = 'bold', color = 'k')
+    #plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
+    #plt.xlabel("Time (CST)", fontsize = 15, labelpad = 5, fontweight = 'bold', color = 'k')
     
     #DAY 2 Relative Humidity, precip potential
-    ax1 = fig.add_subplot(3,3,8)
-    plt.title('Day 2: Relative Humidity (line) and Chance of\nPrecipitation in the previous 6 hour period (bar).\nValid ' 
-              + str(day1 + dat.timedelta(days=1)) + ' 12:00 AM - 11:59 PM', fontsize = 16)
-    ax1.plot(gfsHours2, gfsRH2, 'r')
+    ax1 = fig.add_subplot(2,3,5)
+    plt.title('Relative humidity (line),chance of precipitation in the previous 6 hour period (bar),\nand wind barbs (knots).\nDay 2: ' 
+              + str(day1 + dat.timedelta(days=1)) + '\n12:00 AM - 11:59 PM', fontsize = 17)
+    ax1.plot(gfsHours2, gfsRH2, 'firebrick')
     plt.axis([24, 48, 0, 100])
-    ax1.bar(gfsHours2, gfsPoP2, width = 0.70, color = 'r', label = 'GFS')
+    ax1.bar(gfsHours2, gfsPoP2, width = 0.70, color = 'firebrick', label = 'GFS')
     plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
     plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
     plt.xlabel("Time (CST)", fontsize = 15, labelpad = 5, fontweight = 'bold', color = 'k')
-    plt.yticks(fontweight = 'bold', color = 'k')
+    plt.yticks(np.arange(0,101,20), fontweight = 'bold', color = 'k')
     
     ax2 = ax1.twiny()
-    ax2.plot(namHours2, namRH2, 'b')
-    ax2.bar(np.array(namHours2)-0.70, namPoP2, width = 0.70, color = 'b', label = 'NAM')
-    plt.axis([24, 48, 0, 100])
+    plt.barbs(gfsHours2, -20, gfsXWind2, gfsYWind2, linewidth = 3, color = 'firebrick')
+    plt.barbs(namHours2, -20, namXWind2, namYWind2, linewidth = 3, color = 'slateblue')
+    plt.hlines(0,0,48, color = 'k')
+    ax2.plot(namHours2, namRH2, 'slateblue')
+    ax2.bar(np.array(namHours2)-0.70, namPoP2, width = 0.70, color = 'slateblue', label = 'NAM')
+    plt.axis([24, 48, -50, 100])
     plt.axis('off')
     plt.legend(bbox_to_anchor=(0.0, 1.0), loc=2, borderaxespad=0, fontsize = 12)
 
     
     #DAY 3 Temperature/Dew Point
     hours, xlabel = xlabels(2,3)
-    ax1 = fig.add_subplot(3,3,3)
-    plt.title('Day 3: Temperature and Dew Point\nValid ' + str(day1 + dat.timedelta(days=2))
-              + ' 12:00 AM - 11:59 PM', fontsize = 18)
-    ax1.plot(gfsHours3, gfsTemps3, 'r', label = 'GFS')
-    ax1.plot(gfsHours3, gfsDewpoints3, 'r--')
+    ax1 = fig.add_subplot(2,3,3)
+    plt.title('Day 3: ' + str(day1 + dat.timedelta(days=2))
+              + '\n12:00 AM - 11:59 PM', fontsize = 17)
+    ax1.plot(gfsHours3, gfsTemps3, 'firebrick', label = 'GFS')
+    ax1.plot(gfsHours3, gfsDewpoints3, color = 'firebrick', linestyle = '--')
     plt.axis([48, 72, minDewpoint - 5, maxT + 5])
     plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
     plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
     plt.yticks(fontweight = 'bold', color = 'k')    
     
     ax2 = ax1.twiny()
-    ax2.plot(namHours3, namTemps3, 'b', label = 'NAM')
-    ax2.plot(namHours3, namDewpoints3, 'b--')    
+    ax2.plot(namHours3, namTemps3, 'slateblue', label = 'NAM')
+    ax2.plot(namHours3, namDewpoints3, color = 'slateblue', linestyle = '--')    
     plt.axis([48, 72, minDewpoint - 5, maxT + 5])
     plt.axis('off')
     plt.legend(bbox_to_anchor=(0.0, 1.0), loc=2, borderaxespad=0, fontsize = 12)
     
     #DAY 3 winds
-    ax1 = fig.add_subplot(3,3,6)
-    plt.title('Day 3: Wind Speed and Direction.\nValid ' + str(day1 + dat.timedelta(days=2))
-              + ' 12:00 AM - 11:59 PM ', fontsize = 18)
-    ax1.bar(gfsHours3, gfsWind3, width = 0.70, color = 'red', label = 'GFS')
-    ax1.bar(np.array(namHours3)-0.70, namWind3, width = 0.70, color = 'b', label = 'NAM')
-    plt.barbs(gfsHours3, -10, gfsXWind3, gfsYWind3, linewidth = 1.25, color = 'red')
-    plt.barbs(namHours3, -10, namXWind3, namYWind3, linewidth = 1.25, color = 'b')
-    plt.hlines(0, 0, 73, color = 'k')
-    plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
-    plt.axis([46.5, 72, -20, maxWind + 15])
-    plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
-    plt.yticks(np.arange(0,max(max(gfsWind3), max(namWind3)), 5), fontweight = 'bold', color = 'k')
+    #ax1 = fig.add_subplot(3,3,6)
+    #plt.title('Day 3: Wind Speed and Direction.\nValid ' + str(day1 + dat.timedelta(days=2))
+    #          + ' 12:00 AM - 11:59 PM ', fontsize = 18)
+    #ax1.bar(gfsHours3, gfsWind3, width = 0.70, color = 'red', label = 'GFS')
+    #ax1.bar(np.array(namHours3)-0.70, namWind3, width = 0.70, color = 'b', label = 'NAM')
+    #plt.barbs(gfsHours3, 0, gfsXWind3, gfsYWind3, linewidth = 1.25, color = 'red')
+    #plt.barbs(namHours3, 0, namXWind3, namYWind3, linewidth = 1.25, color = 'b')
+    #plt.hlines(0, 0, 73, color = 'k')
+    #plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
+    #plt.axis([46.5, 72, -10, 10])
+    #plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
+    #plt.yticks(np.arange(0,max(max(gfsWind3), max(namWind3)), 5), fontweight = 'bold', color = 'k')
    
     #DAY 3 Relative Humidity, precip potential
-    ax1 = fig.add_subplot(3,3,9)
-    plt.title('Day 3: Relative Humidity (line) and Chance of\nPrecipitation in the previous 6 hour period (bar).\nValid ' 
-              + str(day1 + dat.timedelta(days=2)) + ' 12:00 AM - 11:59 PM', fontsize = 16)
-    ax1.plot(gfsHours3, gfsRH3, 'r')
+    ax1 = fig.add_subplot(2,3,6)
+    plt.title('Day 3: ' 
+              + str(day1 + dat.timedelta(days=2)) + '\n12:00 AM - 11:59 PM', fontsize = 16)
+    ax1.plot(gfsHours3, gfsRH3, 'firebrick')
     plt.axis([46.5, 72, 0, 100])
-    ax1.bar(gfsHours3, gfsPoP3, width = 0.70, color = 'r', label = 'GFS')
+    ax1.bar(gfsHours3, gfsPoP3, width = 0.70, color = 'firebrick', label = 'GFS')
     plt.legend(bbox_to_anchor=(1.0, 1.0), loc=1, borderaxespad=0, fontsize = 12)
     plt.xticks(hours, xlabel, fontweight = 'bold', color = 'k')
-    plt.yticks(fontweight = 'bold', color = 'k')
+    plt.yticks(np.arange(0,101,20),fontweight = 'bold', color = 'k')
     
     ax2 = ax1.twiny()
-    ax2.plot(namHours3, namRH3, 'b')
-    ax2.bar(np.array(namHours3)-0.70, namPoP3, width = 0.70, color = 'b', label = 'NAM')
-    plt.axis([46.5, 72, 0, 100])
+    ax2.plot(namHours3, namRH3, 'slateblue')
+    ax2.bar(np.array(namHours3)-0.70, namPoP3, width = 0.70, color = 'slateblue', label = 'NAM')
+    plt.barbs(gfsHours3, -20, gfsXWind3, gfsYWind3, linewidth = 3, color = 'firebrick')
+    plt.barbs(namHours3, -20, namXWind3, namYWind3, linewidth = 3, color = 'slateblue')
+    plt.hlines(0, 0, 73, color = 'k')
+    plt.axis([46.5, 72, -50, 100])
     plt.axis('off')
     plt.legend(bbox_to_anchor=(0.0, 1.0), loc=2, borderaxespad=0, fontsize = 12)
     
-    plt.savefig('ModelData.png', bbox_inches = 'tight', facecolor = 'gray')
+    plt.savefig('ModelData.png', bbox_inches = 'tight', facecolor = 'lightgray')
     
     tweet = "It's the MOSt important time of the day! Here's what the models are forecasting for the next few days."
     try:
-        #print 'done'
         #plt.show()
         api.update_with_media("ModelData.png", status=tweet)
+        print 'Tweet successful!'
     except tweepy.error.TweepError:
         print ("Twitter error raised")
     except HTTPError:
@@ -428,7 +408,7 @@ http://weather.rap.ucar.edu/
     plt.close('all')
 
 
-# In[12]:
+# In[192]:
 
 plotModelOutput(api)
 
